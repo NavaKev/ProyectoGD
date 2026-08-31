@@ -30,7 +30,7 @@ public class EnemySeg : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"[NubePerseguidora] No se encontró ningún objeto con el Tag 'Player' en la escena.", this);
+                Debug.LogWarning($"[EnemySeg] No se encontró ningún objeto con el Tag 'Player' en la escena.", this);
             }
         }
 

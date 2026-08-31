@@ -18,9 +18,13 @@ public class PlayerMov : MonoBehaviour
 
     [Header("Detección de Suelo")]
     [SerializeField] private Transform groundCheck;
-    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private float groundCheckRadius = 0.25f;
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private bool isGrounded;
+
+    [Header("Estabilidad en Plataformas")]
+    [SerializeField] private float coyoteTime = 0.1f;
+    private float contadorCoyote = 0f;
 
     [Header("Referencias")]
     public Rigidbody2D rb;
@@ -78,6 +82,11 @@ public class PlayerMov : MonoBehaviour
             inputMovimiento = moverAccion.ReadValue<Vector2>();
         }
 
+        if (contadorCoyote > 0f)
+        {
+            contadorCoyote -= Time.deltaTime;
+        }
+
         GestionarGiro();
         ActualizarAnimaciones();
     }
@@ -92,10 +101,13 @@ public class PlayerMov : MonoBehaviour
     {
         if (anim == null) return;
 
-        
+        bool estadoSueloEstable = isGrounded || contadorCoyote > 0f;
+
         anim.SetFloat(speedHash, Mathf.Abs(rb.linearVelocity.x));
-        anim.SetBool(isGroundedHash, isGrounded);
-        anim.SetFloat(verticalVelocityHash, rb.linearVelocity.y);
+        anim.SetBool(isGroundedHash, estadoSueloEstable);
+
+        float velYAnimacion = estadoSueloEstable ? 0f : rb.linearVelocity.y;
+        anim.SetFloat(verticalVelocityHash, velYAnimacion);
     }
 
     private void AplicarMovimientoHorizontal()
@@ -119,25 +131,53 @@ public class PlayerMov : MonoBehaviour
     {
         if (saltosRestantes > 0)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
-            rb.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
+            // 1. Desvincular de la plataforma inmediatamente
+            if (transform.parent != null)
+            {
+                transform.SetParent(null);
+            }
+
+            // 2. Forzar despegue vertical neto
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, fuerzaSalto);
 
             saltosRestantes--;
             tiempoUltimoSalto = Time.time;
             isGrounded = false;
+            contadorCoyote = 0f;
 
-            if (anim != null) anim.SetBool(isGroundedHash, false);
+            if (anim != null)
+            {
+                anim.SetBool(isGroundedHash, false);
+                anim.SetFloat(verticalVelocityHash, fuerzaSalto);
+            }
         }
     }
 
     private void CheckGroundStatus()
     {
-        if (groundCheck != null)
+        // Durante los primeros 0.15s del salto, ignorar detección para permitir despegar de la plataforma ascendente
+        if (Time.time < (tiempoUltimoSalto + cooldownRecargaSuelo))
         {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+            isGrounded = false;
+            return;
         }
 
-        if (isGrounded && Time.time > (tiempoUltimoSalto + cooldownRecargaSuelo) && rb.linearVelocity.y <= 0.1f)
+        if (groundCheck != null)
+        {
+            bool tocandoFisico = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+            if (tocandoFisico)
+            {
+                isGrounded = true;
+                contadorCoyote = coyoteTime;
+            }
+            else
+            {
+                isGrounded = false;
+            }
+        }
+
+        if (isGrounded || contadorCoyote > 0f)
         {
             saltosRestantes = saltosMaximos;
         }
@@ -167,7 +207,7 @@ public class PlayerMov : MonoBehaviour
     {
         if (groundCheck != null)
         {
-            Gizmos.color = isGrounded ? Color.green : Color.red;
+            Gizmos.color = (isGrounded || contadorCoyote > 0f) ? Color.green : Color.red;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
     }

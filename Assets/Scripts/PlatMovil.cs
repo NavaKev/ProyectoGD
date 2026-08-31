@@ -1,47 +1,62 @@
 using UnityEngine;
 
 public class PlatMovil : MonoBehaviour
-
 {
-    public Transform[] puntos; // Array de puntos de destino para el movimiento
-    public int indiceDestino = 0; // Índice del punto de destino actual
-    public float velocidad = 1f; // Velocidad de movimiento
+    public Transform[] puntos;
+    public int indiceDestino = 0;
+    public float velocidad = 1f;
 
+    [Header("Tiempo de Espera")]
+    public float tiempoEspera = 2f;
+    private float temporizadorEspera = 0f;
+    private int direccion = 1;
 
     void Start()
     {
-        
+        if (puntos != null && puntos.Length > 0 && puntos[0] != null)
+        {
+            transform.position = puntos[0].position;
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if(Vector3.Distance(this.transform.position, puntos[indiceDestino].position) <= 0.1f)
+        if (puntos == null || puntos.Length < 2) return;
+
+        if (temporizadorEspera > 0f)
         {
-            // Cambiar al siguiente punto de destino
-            indiceDestino++;
-            if (indiceDestino >= puntos.Length)
-            {
-                indiceDestino = 0; 
-            }
-
-            if (indiceDestino == 0)
-            {
-                
-                System.Array.Reverse(puntos);
-            }
-
+            temporizadorEspera -= Time.deltaTime;
+            return;
         }
-        this.transform.position = Vector3.MoveTowards(this.transform.position, puntos[indiceDestino].position, velocidad * Time.deltaTime);
+
+        transform.position = Vector3.MoveTowards(transform.position, puntos[indiceDestino].position, velocidad * Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, puntos[indiceDestino].position) <= 0.05f)
+        {
+            if (indiceDestino >= puntos.Length - 1 && direccion == 1)
+            {
+                direccion = -1;
+                temporizadorEspera = tiempoEspera;
+            }
+            else if (indiceDestino <= 0 && direccion == -1)
+            {
+                direccion = 1;
+                temporizadorEspera = tiempoEspera;
+            }
+
+            indiceDestino += direccion;
+        }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.transform.CompareTag("Player"))
         {
-            Debug.Log("El jugador ha entrado en contacto con la plataforma móvil.");
-            // Hacer que el jugador sea hijo de la plataforma para que se mueva con ella
-            collision.transform.SetParent(this.transform);
+            Rigidbody2D rbPlayer = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (rbPlayer != null && rbPlayer.linearVelocity.y <= 0.1f)
+            {
+                collision.transform.SetParent(this.transform);
+            }
         }
     }
 
@@ -49,8 +64,10 @@ public class PlatMovil : MonoBehaviour
     {
         if (collision.transform.CompareTag("Player"))
         {
-            // Quitar al jugador como hijo de la plataforma cuando salga de ella
-            collision.transform.SetParent(null);
+            if (collision.transform.parent == this.transform)
+            {
+                collision.transform.SetParent(null);
+            }
         }
     }
 }

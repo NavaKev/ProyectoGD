@@ -1,40 +1,43 @@
 using System.Collections;
 using UnityEngine;
 
-public class PalancaPlataformasSecuencia : MonoBehaviour
+[RequireComponent(typeof(Collider2D))]
+public class PalancaPlataformas: MonoBehaviour
 {
     [Header("Secuencia de Plataformas")]
-    [Tooltip("Orden en el que se irán activando las plataformas")]
     [SerializeField] private GameObject[] plataformas;
-
-    [Tooltip("Tiempo en segundos que permanece activa cada plataforma")]
-    [SerializeField] private float intervaloSegundos = 3f;
+    [SerializeField] private float intervaloSegundos = 2f;
 
     [Header("Comportamiento")]
-    [Tooltip("Si es true, el ciclo se repite infinitamente tras tocar la palanca. Si es false, recorre la lista una vez y termina.")]
+
     [SerializeField] private bool cicloInfinito = false;
 
-    [Header("Feedback Visual")]
-    [SerializeField] private Color colorActivo = Color.green;
-    [SerializeField] private Color colorInactivo = Color.red;
+    [Header("Animación de la Palanca")]
 
-    private SpriteRenderer spriteRendererPalanca;
+    [SerializeField] private Animator animPalanca;
+    private readonly int activaHash = Animator.StringToHash("Activa");
+
     private Coroutine rutinaSecuencia;
     private bool secuenciaEnCurso = false;
 
     private void Awake()
     {
-        spriteRendererPalanca = GetComponent<SpriteRenderer>();
+        if (animPalanca == null)
+        {
+            animPalanca = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
+        }
+
+        Collider2D col = GetComponent<Collider2D>();
+        col.isTrigger = true;
     }
 
     private void Start()
     {
-        // Apaga todas las plataformas al inicio
         ApagarTodasLasPlataformas();
 
-        if (spriteRendererPalanca != null)
+        if (animPalanca != null)
         {
-            spriteRendererPalanca.color = colorInactivo;
+            animPalanca.SetBool(activaHash, false);
         }
     }
 
@@ -42,45 +45,48 @@ public class PalancaPlataformasSecuencia : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            // Evita reiniciar o duplicar la corrutina si ya está corriendo
             if (!secuenciaEnCurso)
             {
-                rutinaSecuencia = StartCoroutine(SecuenciaPlataformas());
+                rutinaSecuencia = StartCoroutine(SecuenciaIdaYVuelta());
             }
         }
     }
 
-    private IEnumerator SecuenciaPlataformas()
+    private IEnumerator SecuenciaIdaYVuelta()
     {
         secuenciaEnCurso = true;
 
-        if (spriteRendererPalanca != null)
+        // Activa la palanca en el Animator
+        if (animPalanca != null)
         {
-            spriteRendererPalanca.color = colorActivo;
+            animPalanca.SetBool(activaHash, true);
         }
-        transform.rotation = Quaternion.Euler(0, 0, -45f);
 
         do
         {
+            // 1. Recorrido de IDA (del primer elemento al último)
             for (int i = 0; i < plataformas.Length; i++)
             {
-                // Apaga todas y activa únicamente la plataforma del turno actual
                 ActivarSoloPlataforma(i);
-
-                // Espera los 3 segundos antes de pasar a la siguiente
                 yield return new WaitForSeconds(intervaloSegundos);
             }
-        } 
-        while (cicloInfinito);
 
-        // Al terminar el recorrido (si no es infinito), apaga todo y restablece la palanca
+            // 2. Recorrido de VUELTA (desde el penúltimo hasta el segundo para no repetir extremos)
+            for (int i = plataformas.Length - 2; i > 0; i--)
+            {
+                ActivarSoloPlataforma(i);
+                yield return new WaitForSeconds(intervaloSegundos);
+            }
+
+        } while (cicloInfinito);
+
+        // Al finalizar la vuelta completa (si no es infinito), apaga todo y restablece la palanca
         ApagarTodasLasPlataformas();
-        
-        if (spriteRendererPalanca != null)
+
+        if (animPalanca != null)
         {
-            spriteRendererPalanca.color = colorInactivo;
+            animPalanca.SetBool(activaHash, false);
         }
-        transform.rotation = Quaternion.identity;
 
         secuenciaEnCurso = false;
         rutinaSecuencia = null;
@@ -99,6 +105,8 @@ public class PalancaPlataformasSecuencia : MonoBehaviour
 
     private void ApagarTodasLasPlataformas()
     {
+        if (plataformas == null) return;
+
         foreach (GameObject obj in plataformas)
         {
             if (obj != null) obj.SetActive(false);
