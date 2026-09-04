@@ -8,16 +8,16 @@ public class EnemySeg : MonoBehaviour
 
     [Header("Configuración de Persecución")]
     [SerializeField] private float velocidad = 3.5f;
-    [Tooltip("Altura fija a la que flotará sobre la posición del jugador")]
     [SerializeField] private float alturaSobreJugador = 4.0f;
-    [Tooltip("Distancia horizontal mínima para empezar a moverse")]
     [SerializeField] private float distanciaMinima = 0.2f;
 
     [Header("Spawn de Piedras")]
     [SerializeField] private GameObject prefabPiedra;
-    [Tooltip("Punto de salida debajo de la nube (si se deja vacío, usa la posición de la nube)")]
     [SerializeField] private Transform puntoSpawnPiedra;
     [SerializeField] private float intervaloSpawn = 1.5f;
+
+    [Header("Disparo de Proyectil")]
+    [SerializeField] private float velocidadProyectil = 8f;
 
     void Start()
     {
@@ -39,7 +39,6 @@ public class EnemySeg : MonoBehaviour
             puntoSpawnPiedra = transform;
         }
 
-        // Inicia el bucle continuo de spawn de piedras
         StartCoroutine(RutinaSpawnPiedras());
     }
 
@@ -52,10 +51,8 @@ public class EnemySeg : MonoBehaviour
 
     private void SeguirJugador()
     {
-        // Calculamos la posición destino (misma X que el jugador, pero a una altura fija en Y)
         Vector2 posicionObjetivo = new Vector2(jugador.position.x, jugador.position.y + alturaSobreJugador);
 
-        // Solo se desplaza si no está ya justo encima del jugador
         if (Mathf.Abs(transform.position.x - jugador.position.x) > distanciaMinima)
         {
             transform.position = Vector2.MoveTowards(
@@ -66,7 +63,6 @@ public class EnemySeg : MonoBehaviour
         }
         else
         {
-            // Ajusta suavemente la altura vertical en caso de que el jugador salte o baje
             transform.position = Vector2.MoveTowards(
                 transform.position,
                 new Vector2(transform.position.x, posicionObjetivo.y),
@@ -77,14 +73,25 @@ public class EnemySeg : MonoBehaviour
 
     private IEnumerator RutinaSpawnPiedras()
     {
-        // Espera inicial de 1 segundo antes de soltar la primera piedra
         yield return new WaitForSeconds(1.0f);
 
         while (true)
         {
-            if (prefabPiedra != null)
+            if (prefabPiedra != null && jugador != null)
             {
-                Instantiate(prefabPiedra, puntoSpawnPiedra.position, Quaternion.identity);
+                
+                Vector2 direccion = ((Vector2)jugador.position - (Vector2)puntoSpawnPiedra.position).normalized;
+
+                float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+                Quaternion rotacionDisparo = Quaternion.Euler(0f, 0f, angulo);
+
+                GameObject piedra = Instantiate(prefabPiedra, puntoSpawnPiedra.position, rotacionDisparo);
+
+                Rigidbody2D rbPiedra = piedra.GetComponent<Rigidbody2D>();
+                if (rbPiedra != null)
+                {
+                    rbPiedra.linearVelocity = direccion * velocidadProyectil;
+                }
             }
 
             yield return new WaitForSeconds(intervaloSpawn);
