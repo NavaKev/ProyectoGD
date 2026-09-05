@@ -35,7 +35,7 @@ public class PlayerMov : MonoBehaviour
     private InputAction moverAccion;
     private InputAction saltarAccion;
     private Vector2 inputMovimiento;
-    private bool mirandoDerecha = true;
+    public bool mirandoDerecha = true;
 
     // Hashes para optimizar el rendimiento del Animator
     private readonly int speedHash = Animator.StringToHash("Speed");
@@ -183,7 +183,7 @@ public class PlayerMov : MonoBehaviour
         }
     }
 
-    private void GestionarGiro()
+    public void GestionarGiro()
     {
         if (inputMovimiento.x > 0.1f && !mirandoDerecha)
         {
