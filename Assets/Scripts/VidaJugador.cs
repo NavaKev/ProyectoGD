@@ -11,11 +11,13 @@ public class VidaJugador : MonoBehaviour
     [Header("UI de Muerte y Reaparición")]
     [SerializeField] private GameObject textoRevivir; 
 
-    private Vector3 posicionInicial;
-    private bool estaMuerto = false;
+    [SerializeField] private GameObject textVida;
     private Collider2D col2D;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
+
+    private Vector3 posicionInicial;
+    private bool estaMuerto = false;
 
     void Awake()
     {
@@ -28,6 +30,7 @@ public class VidaJugador : MonoBehaviour
     {
         posicionInicial = transform.position;
         vidaActual = vidaMaxima;
+        textVida.GetComponent<TMP_Text>().text = "Vida: " + vidaActual;
 
         if (textoRevivir != null)
         {
@@ -49,6 +52,7 @@ public class VidaJugador : MonoBehaviour
         if (estaMuerto) return;
 
         vidaActual = Mathf.Min(vidaActual + cantidad, vidaMaxima);
+        textVida.GetComponent<TMP_Text>().text = "Vida: " + vidaActual;
         Debug.Log("Vida actual: " + vidaActual);
     }
 
@@ -59,6 +63,7 @@ public class VidaJugador : MonoBehaviour
         if (estaMuerto) return;
 
         vidaActual -= cantidad;
+        textVida.GetComponent<TMP_Text>().text = "Vida: " + vidaActual;
         Debug.Log("Vida actual: " + vidaActual);
 
         if (vidaActual <= 0)
