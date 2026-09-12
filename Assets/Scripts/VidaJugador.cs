@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using UnityEngine.UI;
 
 public class VidaJugador : MonoBehaviour
 {
@@ -11,7 +12,11 @@ public class VidaJugador : MonoBehaviour
     [Header("UI de Muerte y Reaparición")]
     [SerializeField] private GameObject textoRevivir; 
 
-    [SerializeField] private GameObject textVida;
+    public TextMeshProUGUI textVida; //Barra de vida por texto
+
+    [SerializeField] private Image barraVida; //Barra de vida por imagen
+
+    
     private Collider2D col2D;
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
@@ -30,7 +35,8 @@ public class VidaJugador : MonoBehaviour
     {
         posicionInicial = transform.position;
         vidaActual = vidaMaxima;
-        textVida.GetComponent<TMP_Text>().text = "Vida: " + vidaActual;
+        textVida.text = "Vida: " + vidaActual; //Barra de Vida por text
+        barraVida.fillAmount = 1f;  // Barra de vida por imagen
 
         if (textoRevivir != null)
         {
@@ -52,7 +58,8 @@ public class VidaJugador : MonoBehaviour
         if (estaMuerto) return;
 
         vidaActual = Mathf.Min(vidaActual + cantidad, vidaMaxima);
-        textVida.GetComponent<TMP_Text>().text = "Vida: " + vidaActual;
+        textVida.text = "Vida: " + vidaActual;
+        barraVida.fillAmount = (float)vidaActual / vidaMaxima; // Actualiza la barra de vida por imagen
         Debug.Log("Vida actual: " + vidaActual);
     }
 
@@ -63,13 +70,15 @@ public class VidaJugador : MonoBehaviour
         if (estaMuerto) return;
 
         vidaActual -= cantidad;
-        textVida.GetComponent<TMP_Text>().text = "Vida: " + vidaActual;
         Debug.Log("Vida actual: " + vidaActual);
 
         if (vidaActual <= 0)
         {
             morir();
         }
+
+        textVida.text = "Vida: " + vidaActual;
+        barraVida.fillAmount = (float)vidaActual / vidaMaxima; // Actualiza la barra de vida por imagen
     }
 
     public void morir()
@@ -97,6 +106,8 @@ public class VidaJugador : MonoBehaviour
     {
         estaMuerto = false;
         vidaActual = vidaMaxima;
+        textVida.text = "Vida: " + vidaActual;
+        barraVida.fillAmount = 1f; // Actualiza la barra de vida por imagen
 
         transform.position = posicionInicial;
 
