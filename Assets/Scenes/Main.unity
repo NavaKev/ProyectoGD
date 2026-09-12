@@ -769,6 +769,7 @@ Transform:
   m_Children:
   - {fileID: 438903242}
   - {fileID: 1293810679}
+  - {fileID: 1645397766}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &257212790
@@ -807,6 +808,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemigoNavmesh
   target: {fileID: 1624799343}
   agent: {fileID: 257212790}
+  visEnemigo: {fileID: 1645397767}
 --- !u!1 &273956157
 GameObject:
   m_ObjectHideFlags: 0
@@ -2295,7 +2297,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &441627806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9676,7 +9678,7 @@ GameObject:
   - component: {fileID: 1496964048}
   - component: {fileID: 1496964047}
   m_Layer: 0
-  m_Name: Trampa (1)
+  m_Name: Trampa
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10266,6 +10268,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634731068}
   m_CullTransparentMesh: 1
+--- !u!1 &1645397765
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1645397766}
+  - component: {fileID: 1645397767}
+  m_Layer: 0
+  m_Name: Ojos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1645397766
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645397765}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.38, y: 1.23, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 257212789}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1645397767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1645397765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 010f953b100be544086779d123498d18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionEnemigo
+  distanciaVision: 5
+  capasVision:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  posicionJugador: {fileID: 838753506}
 --- !u!1 &1655834728
 GameObject:
   m_ObjectHideFlags: 0

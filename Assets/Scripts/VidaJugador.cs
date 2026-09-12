@@ -10,13 +10,10 @@ public class VidaJugador : MonoBehaviour
     private int vidaActual;
 
     [Header("Configuración de Escudo")]
-    [Tooltip("Indica si el jugador cuenta con el escudo protector inicial")]
     [SerializeField] private bool tieneEscudo = true;
-    [Tooltip("GameObject o Sprite hijo que representa la imagen del escudo")]
     [SerializeField] private GameObject objetoEscudoVisual;
 
     [Header("UI de Muerte y Reaparición")]
-    [Tooltip("Arrastra aquí el objeto del texto que dice 'Presiona espacio para revivir'")]
     [SerializeField] private GameObject textoRevivir; 
 
     public TextMeshProUGUI textVida; //Barra de vida por texto
@@ -89,7 +86,7 @@ public class VidaJugador : MonoBehaviour
                 objetoEscudoVisual.SetActive(false); // Oculta/borra la imagen del escudo
             }
 
-            Debug.Log("<color=cyan>[Escudo]</color> ¡El escudo absorbió el golpe y se ha roto!");
+            Debug.Log("¡El escudo absorbió el golpe y se ha roto!");
             return; // Detiene la ejecución para no restar puntos de vida
         }
 

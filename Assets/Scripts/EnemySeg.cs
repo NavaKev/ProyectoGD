@@ -19,6 +19,7 @@ public class EnemySeg : MonoBehaviour
     [Header("Disparo de Proyectil")]
     [SerializeField] private float velocidadProyectil = 8f;
 
+
     void Start()
     {
         if (jugador == null)
