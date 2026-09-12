@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem; // Requerido para el Input System
+using UnityEngine.InputSystem;
+using UnityEngine.UI; 
 
 public class Pistola : MonoBehaviour
 {
@@ -11,19 +12,22 @@ public class Pistola : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
 
     [Header("Munición y Recarga")]
-    [SerializeField] private int capacidadCargador = 3;
+    [SerializeField] private int capacidadCargador = 5; // Ajustado a 5
     [SerializeField] private float tiempoRecarga = 1.2f;
     [SerializeField] private int balasActuales;
 
+    [Header("Interfaz de Balas")]
+    [SerializeField] private GameObject[] iconosBalas; // Array para las 5 imágenes
+
     [Header("Tiempo entre disparos")]
-    [SerializeField] private float tiempoEntreDisparos = 1f; // Tiempo mínimo entre disparos
+    [SerializeField] private float tiempoEntreDisparos = 0.5f; // Tiempo mínimo entre disparos
     [SerializeField] private float ultimoDisparo;
 
     private InputAction dispararAccion;
     private InputAction recargarAccion;
     private bool estaRecargando = false;
 
-    // Propiedades públicas para consultar estado o conectar a la UI
+    // Propiedades públicas para consultar estado
     public int BalasActuales => balasActuales;
     public int CapacidadCargador => capacidadCargador;
     public bool EstaRecargando => estaRecargando;
@@ -47,6 +51,8 @@ public class Pistola : MonoBehaviour
             dispararAccion?.Enable();
             recargarAccion?.Enable();
         }
+
+        ActualizarUIBalas(); // Inicializa las 5 imágenes visibles
     }
 
     private void OnDisable()
@@ -57,13 +63,11 @@ public class Pistola : MonoBehaviour
 
     private void Update()
     {
-        
         if (dispararAccion != null && dispararAccion.WasPressedThisFrame())
         {
             IntentarDisparar();
         }
 
-        
         bool presionoR = (recargarAccion != null && recargarAccion.WasPressedThisFrame()) ||
                          (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame);
 
@@ -83,7 +87,7 @@ public class Pistola : MonoBehaviour
 
         if (balasActuales <= 0)
         {
-            Debug.Log("Cargador vacío.Presiona 'R' para recargar.");
+            Debug.Log("Cargador vacío. Presiona 'R' para recargar.");
             return;
         }
 
@@ -94,7 +98,6 @@ public class Pistola : MonoBehaviour
 
         ultimoDisparo = Time.time;
         DispararProyectil();
-
     }
 
     private void DispararProyectil()
@@ -102,6 +105,7 @@ public class Pistola : MonoBehaviour
         if (balaPrefab == null) return;
 
         balasActuales--;
+        ActualizarUIBalas();
 
         GameObject bala = Instantiate(balaPrefab, puntoDisparo.position, puntoDisparo.rotation);
 
@@ -122,7 +126,21 @@ public class Pistola : MonoBehaviour
         yield return new WaitForSeconds(tiempoRecarga);
 
         balasActuales = capacidadCargador;
+        ActualizarUIBalas(); // Vuelve a mostrar las 5 imágenes
         estaRecargando = false;
-        Debug.Log("Recarga completa. Cargador listo con 3 balas.");
+        Debug.Log("Recarga completa. Cargador listo con 5 balas.");
+    }
+
+    private void ActualizarUIBalas()
+    {
+        if (iconosBalas == null || iconosBalas.Length == 0) return;
+
+        for (int i = 0; i < iconosBalas.Length; i++)
+        {
+            if (iconosBalas[i] != null)
+            {
+                iconosBalas[i].SetActive(i < balasActuales);
+            }
+        }
     }
 }
