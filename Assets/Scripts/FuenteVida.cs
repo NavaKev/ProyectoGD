@@ -5,16 +5,13 @@ using UnityEngine;
 public class FuenteVida : MonoBehaviour
 {
     [Header("Curación")]
-
     [SerializeField] private int puntosCuracion = 1;
 
-    [Tooltip("Tiempo en segundos entre cada curación")]
     [SerializeField] private float intervaloCuracion = 1f;
 
-    [Header("Visuales")]
-    [SerializeField] private SpriteRenderer spriteFuente;
-    [SerializeField] private Color colorInactivo = Color.white;
-    [SerializeField] private Color colorCurando = Color.green;
+    [Header("Efectos Visuales")]
+    [SerializeField] private ParticleSystem particulasCuracion;
+
 
     private Coroutine corrutinaCuracion;
     private Collider2D col2D;
@@ -24,9 +21,17 @@ public class FuenteVida : MonoBehaviour
         col2D = GetComponent<Collider2D>();
         col2D.isTrigger = true; 
 
-        if (spriteFuente == null)
+        
+        if (particulasCuracion == null)
         {
-            spriteFuente = GetComponentInChildren<SpriteRenderer>();
+            particulasCuracion = GetComponentInChildren<ParticleSystem>();
+        }
+
+        
+        if (particulasCuracion != null)
+        {
+            var main = particulasCuracion.main;
+            particulasCuracion.Stop();
         }
     }
 
@@ -56,12 +61,16 @@ public class FuenteVida : MonoBehaviour
 
     private IEnumerator RutinaCuracion(VidaJugador jugador)
     {
-        if (spriteFuente != null) spriteFuente.color = colorCurando;
+        // Activa las partículas
+        if (particulasCuracion != null && !particulasCuracion.isPlaying)
+        {
+            particulasCuracion.Play();
+        }
 
         // Bucle que corre mientras el jugador esté dentro
         while (jugador != null)
         {
-            // Solo cura si aún no ha alcanzado el límite máximo
+            // Solo cura si aún no ha alcanzado la vida máxima
             if (!jugador.TieneVidaMaxima)
             {
                 jugador.Curar(puntosCuracion);
@@ -81,9 +90,10 @@ public class FuenteVida : MonoBehaviour
             corrutinaCuracion = null;
         }
 
-        if (spriteFuente != null)
+        // Detiene la emisión (las partículas que ya salieron se desvanecen solas)
+        if (particulasCuracion != null && particulasCuracion.isPlaying)
         {
-            spriteFuente.color = colorInactivo;
+            particulasCuracion.Stop();
         }
     }
 }

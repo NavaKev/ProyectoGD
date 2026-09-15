@@ -1,31 +1,33 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class Trampolin : MonoBehaviour
 {
     [Header("Configuración del Impulso")]
     [SerializeField] private float fuerzaSalto = 15f;
 
-    [SerializeField] private bool usarAnimacionEscala = true;
-    [SerializeField] private Vector3 escalaAlRebotar = new Vector3(1.2f, 0.6f, 1f);
+    [Header("Animación")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private string parametroAnimacion = "Work";
 
-    private Vector3 escalaOriginal;
-    private Animator animator;
+    private readonly int animHash = Animator.StringToHash("Work");
 
     private void Awake()
     {
-        escalaOriginal = transform.localScale;
-        animator = GetComponent<Animator>();
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>() ?? GetComponentInChildren<Animator>();
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Verifica si el objeto que colisiona es el jugador
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Opcional: Solo rebotar si el jugador cae desde arriba
+            
             foreach (ContactPoint2D punto in collision.contacts)
             {
-                if (punto.normal.y < -0.5f) // El impacto viene desde arriba hacia abajo
+                if (punto.normal.y < -0.5f)
                 {
                     ImpulsarJugador(collision.gameObject);
                     break;
@@ -40,28 +42,22 @@ public class Trampolin : MonoBehaviour
 
         if (rbJugador != null)
         {
-            // Resetea la velocidad en Y antes de aplicar la fuerza para que el impulso sea siempre igual
+            // Resetea la inercia vertical previa
             rbJugador.linearVelocity = new Vector2(rbJugador.linearVelocity.x, 0f);
 
-            // Aplica el impulso hacia arriba
+            // Aplica el salto
             rbJugador.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
 
-            // Feedback visual: Si tienes trigger de animación o cambio de escala
-            if (animator != null)
-            {
-                animator.SetTrigger("Rebotar");
-            }
-            else if (usarAnimacionEscala)
-            {
-                CancelInvoke(nameof(RestaurarEscala));
-                transform.localScale = escalaAlRebotar;
-                Invoke(nameof(RestaurarEscala), 0.15f);
-            }
+            // Activa la animación del trampolín
+            ActivarAnimacionRebote();
         }
     }
 
-    private void RestaurarEscala()
+    private void ActivarAnimacionRebote()
     {
-        transform.localScale = escalaOriginal;
+        if (animator == null) return;
+        animator.SetTrigger(animHash);
+
+        
     }
-}   
+}

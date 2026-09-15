@@ -1,55 +1,43 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class PlacaPresionPiedra : MonoBehaviour
+public class CartelTrampaRoca : MonoBehaviour
 {
     [Header("Spawn de Piedra")]
     [SerializeField] private GameObject prefabPiedra;
+
     [SerializeField] private Transform puntoSpawn;
 
-    [SerializeField] private SpriteRenderer spritePlaca;
-    [SerializeField] private Color colorNormal = Color.white;
-    [SerializeField] private Color colorPresionada = Color.gray;
+    [Header("Configuración")]
+    [SerializeField] private bool activarUnaSolaVez = true;
+
+    [SerializeField] private float retrasoCaida = 0f;
 
     private Collider2D col2D;
-    private bool estaPresionada = false;
+    private bool yaSeActivo = false;
 
     void Awake()
     {
         col2D = GetComponent<Collider2D>();
         col2D.isTrigger = true; 
-
-        if (spritePlaca == null)
-        {
-            spritePlaca = GetComponentInChildren<SpriteRenderer>();
-        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Detecta si lo que pisó la placa es el jugador
-        if (EsJugador(collision) && !estaPresionada)
-        {
-            estaPresionada = true;
-            GenerarPiedra();
+        if (yaSeActivo && activarUnaSolaVez) return;
 
-            if (spritePlaca != null)
-            {
-                spritePlaca.color = colorPresionada;
-            }
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        // Cuando el jugador se baja de la placa, queda lista para volver a activarse
+        // Detecta si lo que atravesó el cartel es el jugador
         if (EsJugador(collision))
         {
-            estaPresionada = false;
+            yaSeActivo = true;
 
-            if (spritePlaca != null)
+            if (retrasoCaida > 0f)
             {
-                spritePlaca.color = colorNormal;
+                Invoke(nameof(GenerarPiedra), retrasoCaida);
+            }
+            else
+            {
+                GenerarPiedra();
             }
         }
     }
@@ -58,7 +46,7 @@ public class PlacaPresionPiedra : MonoBehaviour
     {
         if (prefabPiedra == null)
         {
-            Debug.LogWarning($"[PlacaPresion] No hay prefab de piedra asignado en {gameObject.name}.", this);
+            Debug.LogWarning($"No hay prefab de piedra asignado en {gameObject.name}.", this);
             return;
         }
 
@@ -70,10 +58,9 @@ public class PlacaPresionPiedra : MonoBehaviour
 
     private bool EsJugador(Collider2D col)
     {
-        // Verifica por tag "Player" o por si tiene componentes de vida / detección
         return col.CompareTag("Player") || 
                col.GetComponent<VidaJugador>() != null || 
-               col.GetComponentInParent<VidaJugador>() != null ||
+               col.GetComponentInParent<VidaJugador>() != null || 
                col.GetComponent<DetectorDano>() != null;
     }
 }
