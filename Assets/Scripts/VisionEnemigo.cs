@@ -2,40 +2,64 @@ using UnityEngine;
 
 public class VisionEnemigo : MonoBehaviour
 {
+    [Header("Configuración de Visión")]
+    public float distanciaVision = 5f;
+    public LayerMask capasVision;
 
-    public float distanciaVision = 5f; // Distancia máxima de visión del enemigo
-    public LayerMask capasVision; // Capa que representa los obstáculos
+    [Header("Detección")]
+    public Transform posicionJugador;
 
-    public Transform posicionJugador; // Referencia al transform del jugador
+    private Transform jugadorTransform;
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
-    { 
+    {
+        // Busca al jugador por su Tag al iniciar
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            jugadorTransform = playerObj.transform;
+        }
     }
 
     void Update()
     {
-        detectarJugador();
+        DetectarJugador();
     }
 
-    private void detectarJugador()
+    private void DetectarJugador()
     {
-        Vector2 direccion = this.transform.right; // Dirección hacia la derecha del enemigo
-        RaycastHit2D impacto = Physics2D.Raycast(transform.position, direccion, distanciaVision, capasVision);
+        if (jugadorTransform == null)
+        {
+            posicionJugador = null;
+            return;
+        }
 
-        Debug.DrawRay(transform.position, direccion * distanciaVision, Color.red); // Dibuja el rayo en la escena para depuración
+        // 1. Comprueba si el jugador está dentro de los 5 metros de distancia
+        float distanciaAlJugador = Vector2.Distance(transform.position, jugadorTransform.position);
 
-        if (impacto.collider != null){
-            if (impacto.collider.CompareTag("Player")){
-                posicionJugador = impacto.collider.transform;  
-            } else{
-                posicionJugador = null;
-                
+        if (distanciaAlJugador <= distanciaVision)
+        {
+            // 2. Traza un rayo hacia el jugador para verificar si hay obstáculos en medio
+            Vector2 direccion = (jugadorTransform.position - transform.position).normalized;
+            RaycastHit2D impacto = Physics2D.Raycast(transform.position, direccion, distanciaVision, capasVision);
+
+            Debug.DrawRay(transform.position, direccion * distanciaVision, Color.red);
+
+            // Si el primer obstáculo impactado es el jugador, lo ve claramente
+            if (impacto.collider != null && impacto.collider.CompareTag("Player"))
+            {
+                posicionJugador = jugadorTransform;
+                return;
             }
         }
+
+        // Si está a más de 5 metros o detrás de un muro, lo pierde de vista
+        posicionJugador = null;
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, distanciaVision);
+    }
 }
-
-    

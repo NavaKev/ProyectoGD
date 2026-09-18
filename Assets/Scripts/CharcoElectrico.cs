@@ -4,18 +4,16 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class CharcoElectrico : MonoBehaviour
 {
-    // Daño 
+    [Header("Configuración de Daño")]
     [SerializeField] private int danoEntrada = 2;
     [SerializeField] private int danoZona = 4;
     [SerializeField] private float intervaloDano = 0.5f;
 
-    //Configuración de ciclo eléctrico
+    [Header("Configuración de Ciclo")]
     [SerializeField] private float tiempoCiclo = 5f;
-    [SerializeField] private Color colorDesactivado = Color.white;
-    [SerializeField] private Color colorActivado = Color.yellow;
 
-    //SpriteRenderer para cambiar el color del charco eléctrico
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [Header("Efectos Visuales")]
+    [SerializeField] private ParticleSystem particulasElectricas;
 
     private Collider2D col2D;
     private bool estaActivo = false;
@@ -28,18 +26,19 @@ public class CharcoElectrico : MonoBehaviour
 
     void Awake()
     {
-        
-        if (spriteRenderer == null)
-        {
-            spriteRenderer = GetComponentInChildren<SpriteRenderer>();           
-        }
-
         col2D = GetComponent<Collider2D>();
         col2D.isTrigger = true;
 
-        if (spriteRenderer == null)
+        // Busca automáticamente el ParticleSystem en este objeto o en los hijos si no se asignó
+        if (particulasElectricas == null)
         {
-            Debug.LogWarning($"[CharcoElectrico] No se encontró ningún SpriteRenderer en los hijos de {gameObject.name}.", this);
+            particulasElectricas = GetComponentInChildren<ParticleSystem>();
+        }
+
+        // Asegura que inicie apagado
+        if (particulasElectricas != null)
+        {
+            particulasElectricas.Stop();
         }
     }
 
@@ -54,17 +53,17 @@ public class CharcoElectrico : MonoBehaviour
         {
             // Estado 1: Desactivado
             estaActivo = false;
-            if (spriteRenderer != null)
+            if (particulasElectricas != null && particulasElectricas.isPlaying)
             {
-                spriteRenderer.color = colorDesactivado;
+                particulasElectricas.Stop();
             }
             yield return new WaitForSeconds(tiempoCiclo);
 
             // Estado 2: Activado
             estaActivo = true;
-            if (spriteRenderer != null)
+            if (particulasElectricas != null && !particulasElectricas.isPlaying)
             {
-                spriteRenderer.color = colorActivado;
+                particulasElectricas.Play();
             }
             yield return new WaitForSeconds(tiempoCiclo);
         }

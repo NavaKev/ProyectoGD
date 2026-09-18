@@ -2,18 +2,21 @@ using UnityEngine;
 
 public class VidaEnemigo : MonoBehaviour
 {
+    [Header("Configuración de Vida")]
     [SerializeField] private int vidaMaxima = 5;
     [SerializeField] private int vidaActual;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         vidaActual = vidaMaxima;
     }
 
+    // Método que invoca tanto DetectorDano como AtaqueMelee
     public void RecibirDano(int dano)
     {
         vidaActual -= dano;
+        Debug.Log($"Recibió {dano} de daño. Vida restante: {vidaActual}/{vidaMaxima}");
+
         if (vidaActual <= 0)
         {
             Muerte();
@@ -22,6 +25,6 @@ public class VidaEnemigo : MonoBehaviour
 
     public void Muerte()
     {
-        this.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 }
