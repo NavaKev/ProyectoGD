@@ -17,7 +17,7 @@ public class DetectarDanoEnemy : MonoBehaviour
         if (vidaEnemigo == null) return;
 
         // Registro de cualquier contacto trigger
-        Debug.Log($"[DetectarDanoEnemy] Entró en contacto con: {collision.gameObject.name}");
+        //Debug.Log($"[DetectarDanoEnemy] Entró en contacto con: {collision.gameObject.name}");
 
         // 1. Proyectil (Bala)
         if (collision.CompareTag("Bala"))

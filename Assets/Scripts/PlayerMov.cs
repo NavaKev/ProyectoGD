@@ -46,8 +46,8 @@ public class PlayerMov : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         pi = GetComponent<PlayerInput>();
-        anim = GetComponent<Animator>();
-        if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+        //anim = GetComponent<Animator>();
+        //if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
 
         moverAccion = pi.actions.FindAction("Mover");
         saltarAccion = pi.actions.FindAction("Saltar");
