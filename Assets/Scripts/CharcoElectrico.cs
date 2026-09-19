@@ -24,6 +24,8 @@ public class CharcoElectrico : MonoBehaviour
     public int DanoZona => danoZona;
     public float IntervaloDano => intervaloDano;
 
+    [SerializeField] private AudioSource audioSource;
+
     void Awake()
     {
         col2D = GetComponent<Collider2D>();
@@ -56,6 +58,7 @@ public class CharcoElectrico : MonoBehaviour
             if (particulasElectricas != null && particulasElectricas.isPlaying)
             {
                 particulasElectricas.Stop();
+                audioSource?.Stop();
             }
             yield return new WaitForSeconds(tiempoCiclo);
 
@@ -64,6 +67,7 @@ public class CharcoElectrico : MonoBehaviour
             if (particulasElectricas != null && !particulasElectricas.isPlaying)
             {
                 particulasElectricas.Play();
+                audioSource?.Play();
             }
             yield return new WaitForSeconds(tiempoCiclo);
         }

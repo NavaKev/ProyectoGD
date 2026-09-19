@@ -32,6 +32,9 @@ public class PlayerMov : MonoBehaviour
     public Animator anim;
     public SpriteRenderer spriteRenderer;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+
     private InputAction moverAccion;
     private InputAction saltarAccion;
     private Vector2 inputMovimiento;
@@ -44,6 +47,14 @@ public class PlayerMov : MonoBehaviour
 
     void Awake()
     {
+        if(PlayerPrefs.HasKey("UltimaPosX") && PlayerPrefs.HasKey("UltimaPosY"))
+        {
+            Vector3 posInicio = new Vector3(PlayerPrefs.GetFloat("UltimaPosX"), PlayerPrefs.GetFloat("UltimaPosY"), transform.position.z);
+            this.transform.position = posInicio;
+
+        }
+
+
         rb = GetComponent<Rigidbody2D>();
         pi = GetComponent<PlayerInput>();
         //anim = GetComponent<Animator>();
@@ -120,6 +131,23 @@ public class PlayerMov : MonoBehaviour
         float fuerzaHorizontal = diferenciaVelocidad * tasaAceleracion;
 
         rb.AddForce(new Vector2(fuerzaHorizontal, 0f), ForceMode2D.Force);
+        if (audioSource != null)
+        {
+            if (Mathf.Abs(rb.linearVelocity.x) > 0.1f && (isGrounded || contadorCoyote > 0f))
+            {
+                if (!audioSource.isPlaying)
+                {
+                    audioSource.Play();
+                }
+            }
+            else
+            {
+                if (audioSource.isPlaying)
+                {
+                    audioSource.Pause();
+                }
+            }
+        }
     }
 
     private void OnJumpPerformed(InputAction.CallbackContext context)

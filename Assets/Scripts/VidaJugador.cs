@@ -24,6 +24,10 @@ public class VidaJugador : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rb;
 
+    [Header("Animación")]
+    [SerializeField] private Animator anim;
+
+
     //private Vector3 posicionInicial;
     //private bool estaMuerto = false;
     void Awake()
@@ -106,6 +110,7 @@ public class VidaJugador : MonoBehaviour
     {
         estaMuerto = true;
         vidaActual = 0;
+        anim.SetTrigger("Muerto");
         Debug.Log("El jugador ha muerto.");
 
         if (textoRevivir != null)

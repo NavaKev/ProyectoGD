@@ -23,6 +23,9 @@ public class Pistola : MonoBehaviour
     [SerializeField] private float tiempoEntreDisparos = 0.5f; // Tiempo mínimo entre disparos
     [SerializeField] private float ultimoDisparo;
 
+    [Header("Animación")]
+    [SerializeField] private Animator anim;
+
     private InputAction dispararAccion;
     private InputAction recargarAccion;
     private bool estaRecargando = false;
@@ -121,6 +124,7 @@ public class Pistola : MonoBehaviour
     private IEnumerator RutinaRecarga()
     {
         estaRecargando = true;
+        anim.SetTrigger("Recargando");
         Debug.Log("Recargando...");
 
         yield return new WaitForSeconds(tiempoRecarga);

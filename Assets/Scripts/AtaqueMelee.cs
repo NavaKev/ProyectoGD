@@ -92,6 +92,7 @@ public class AtaqueMelee : MonoBehaviour
                 enemigo.RecibirDano(danoAtaque);
             }
         }
+
     }
 
     private void OnDrawGizmosSelected()
