@@ -2,22 +2,20 @@ using UnityEngine;
 
 public class DetectarDanoEnemy : MonoBehaviour
 {
-    private VidaEnemigo vidaEnemigo;
+    private SistemaVida vidaEnemigo;
     private float siguienteDanoVeneno = 0f;
     private float siguienteDanoElectrico = 0f;
     private bool estabaElectricoActivo = false;
 
     void Awake()
     {
-        vidaEnemigo = GetComponentInParent<VidaEnemigo>();
+        
+        vidaEnemigo = GetComponentInParent<SistemaVida>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (vidaEnemigo == null) return;
-
-        // Registro de cualquier contacto trigger
-        //Debug.Log($"[DetectarDanoEnemy] Entró en contacto con: {collision.gameObject.name}");
 
         // 1. Proyectil (Bala)
         if (collision.CompareTag("Bala"))

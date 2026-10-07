@@ -55,7 +55,7 @@ public class AtaqueMelee : MonoBehaviour
 
     private void Update()
     {
-        // Respaldo directo de mouse por si la acción de Input no estuviera enlazada en el asset
+        
         if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame && Time.time >= tiempoSiguienteAtaque)
         {
             EjecutarAtaque();
@@ -84,15 +84,14 @@ public class AtaqueMelee : MonoBehaviour
 
         foreach (Collider2D col in enemigosGolpeados)
         {
-            // Busca tu script VidaEnemigo en el collider o en su objeto padre
-            VidaEnemigo enemigo = col.GetComponent<VidaEnemigo>() ?? col.GetComponentInParent<VidaEnemigo>();
+            
+            SistemaVida enemigo = col.GetComponent<SistemaVida>() ?? col.GetComponentInParent<SistemaVida>();
 
             if (enemigo != null)
             {
                 enemigo.RecibirDano(danoAtaque);
             }
         }
-
     }
 
     private void OnDrawGizmosSelected()
