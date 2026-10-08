@@ -7,13 +7,9 @@ public class Creditos : MonoBehaviour
 
     void Start()
     {
-        // Créditos  ocultos al iniciar la escena
-        if (panelCreditos != null)
-        {
-            panelCreditos.SetActive(false);
-        }
+        // No forzamos SetActive(false) aquí para no sobrescribir la orden de GestorEscena.
+        // Asegúrate de dejar el 'PanelCreditos' desactivado desde el Editor en la Hierarchy si deseas que inicie oculto por defecto.
     }
-
 
     public void MostrarCreditos()
     {
@@ -23,7 +19,6 @@ public class Creditos : MonoBehaviour
         }
     }
 
-
     public void OcultarCreditos()
     {
         if (panelCreditos != null)
@@ -31,13 +26,10 @@ public class Creditos : MonoBehaviour
             panelCreditos.SetActive(false);
         }
     }
+
     public void SalirDelJuego()
     {
         Debug.Log("Cerrando el juego...");
-
-        // Cierra la aplicación en compilaciones (.exe, APK, etc.)
         Application.Quit();
-
-        
     }
 }
