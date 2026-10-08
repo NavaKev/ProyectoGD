@@ -1188,6 +1188,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GestorEscena
   nombreEscenaPrincipal: Main
+  panelCreditos: {fileID: 180667558}
 --- !u!4 &1015937592
 Transform:
   m_ObjectHideFlags: 0
