@@ -1,80 +1,38 @@
 using UnityEngine;
 
-
-
 public class Bala : MonoBehaviour
-
 {
-
-    public float velocidad = 1f;
-
-    public float direccion = 1f; // 1 para derecha, -1 para izquierda
-
+    public float velocidad = 10f;
+    private Vector2 direccion = Vector2.right; // Dirección por defecto
     private Rigidbody2D rb;
-
-
 
     public int Dano { get; set; } = 2;
 
-
-
-   
-
     void Start()
-
     {
-
         rb = GetComponent<Rigidbody2D>();
-
-
-
-        Destroy(gameObject, 5f); // Destruir la bala después de ciertos segundos
-
+        Destroy(gameObject, 5f); // Destruye la bala después de 5 segundos
     }
-
-   
-
-
-
-    // Update is called once per frame
 
     void FixedUpdate()
-
     {
-
-        rb.linearVelocity = new Vector2(direccion * velocidad,0);
-
+        // Aplica velocidad en la dirección X e Y recibida
+        rb.linearVelocity = direccion * velocidad;
     }
 
-
-
-    public void establecerDireccion(float nuevaDireccion)
-
+    // Sobrecarga para mantener compatibilidad si se envía un float (izquierda / derecha)
+    public void establecerDireccion(float direccionX)
     {
-
-        direccion = nuevaDireccion;
-
-
-
-        if (direccion > 0)
-
-        {
-
-            transform.rotation = Quaternion.Euler(0, 0, 0); // Voltear la bala horizontalmente
-
-        }
-
-        else if (direccion < 0)
-
-        {
-
-            transform.rotation = Quaternion.Euler(0, 180, 0);
-
-        }
-
-
-
+        EstablecerDireccion(new Vector2(direccionX, 0f));
     }
 
-} 
+    // Método principal para asignar dirección en 2D (arriba, abajo, diagonales)
+    public void EstablecerDireccion(Vector2 nuevaDireccion)
+    {
+        direccion = nuevaDireccion.normalized;
 
+        // Calcula el ángulo en grados y rota el sprite de la bala sobre el eje Z
+        float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angulo);
+    }
+}

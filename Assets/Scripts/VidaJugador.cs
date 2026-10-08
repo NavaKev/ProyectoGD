@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement; // Necesario para reiniciar la escena
 
 public class VidaJugador : MonoBehaviour
 {
@@ -14,10 +15,11 @@ public class VidaJugador : MonoBehaviour
     [SerializeField] private GameObject objetoEscudoVisual;
 
     [Header("UI de Muerte y Reaparición")]
+    [SerializeField] private GameObject panelPantallaMuerte; // Arrastra aquí la Image / Panel negro
     [SerializeField] private GameObject textoRevivir; 
 
-    public TextMeshProUGUI textVida; //Barra de vida por texto
-    [SerializeField] private Image barraVida; //Barra de vida por imagen
+    public TextMeshProUGUI textVida;
+    [SerializeField] private Image barraVida;
     private Vector3 posicionInicial;
     private bool estaMuerto = false;
     private Collider2D col2D;
@@ -27,9 +29,6 @@ public class VidaJugador : MonoBehaviour
     [Header("Animación")]
     [SerializeField] private Animator anim;
 
-
-    //private Vector3 posicionInicial;
-    //private bool estaMuerto = false;
     void Awake()
     {
         col2D = GetComponent<Collider2D>();
@@ -41,13 +40,18 @@ public class VidaJugador : MonoBehaviour
     {
         posicionInicial = transform.position;
         vidaActual = vidaMaxima;
-        textVida.text = "Vida: " + vidaActual; //Barra de Vida por text
-        barraVida.fillAmount = 1f;  // Barra de vida por imagen
+        if (textVida != null) textVida.text = "Vida: " + vidaActual;
+        if (barraVida != null) barraVida.fillAmount = 1f;
 
-        // Activa o muestra el escudo al comenzar la partida
         if (objetoEscudoVisual != null)
         {
             objetoEscudoVisual.SetActive(tieneEscudo);
+        }
+
+        // Se asegura de que la pantalla en negro esté oculta al iniciar
+        if (panelPantallaMuerte != null)
+        {
+            panelPantallaMuerte.SetActive(false);
         }
 
         if (textoRevivir != null)
@@ -69,9 +73,8 @@ public class VidaJugador : MonoBehaviour
         if (estaMuerto) return;
 
         vidaActual = Mathf.Min(vidaActual + cantidad, vidaMaxima);
-        textVida.text = "Vida: " + vidaActual;
-        barraVida.fillAmount = (float)vidaActual / vidaMaxima; // Actualiza la barra de vida por imagen
-        Debug.Log("Vida actual: " + vidaActual);
+        if (textVida != null) textVida.text = "Vida: " + vidaActual;
+        if (barraVida != null) barraVida.fillAmount = (float)vidaActual / vidaMaxima;
     }
 
     public bool TieneVidaMaxima => vidaActual >= vidaMaxima;
@@ -80,25 +83,20 @@ public class VidaJugador : MonoBehaviour
     {
         if (estaMuerto) return;
 
-        // 1. Mecánica de Escudo: Bloquea el primer golpe de daño
         if (tieneEscudo)
         {
             tieneEscudo = false;
 
             if (objetoEscudoVisual != null)
             {
-                objetoEscudoVisual.SetActive(false); // Oculta/borra la imagen del escudo
+                objetoEscudoVisual.SetActive(false);
             }
-
-            Debug.Log("¡El escudo absorbió el golpe y se ha roto!");
-            return; // Detiene la ejecución para no restar puntos de vida
+            return;
         }
 
-        // 2. Daño normal a la vida del jugador
         vidaActual -= cantidad;
-        textVida.text = "Vida: " + vidaActual;
-        barraVida.fillAmount = (float)vidaActual / vidaMaxima;
-        Debug.Log("Vida actual: " + vidaActual);
+        if (textVida != null) textVida.text = "Vida: " + vidaActual;
+        if (barraVida != null) barraVida.fillAmount = (float)vidaActual / vidaMaxima;
 
         if (vidaActual <= 0)
         {
@@ -110,8 +108,13 @@ public class VidaJugador : MonoBehaviour
     {
         estaMuerto = true;
         vidaActual = 0;
-        anim.SetTrigger("Muerto");
-        Debug.Log("El jugador ha muerto.");
+        if (anim != null) anim.SetTrigger("Muerto");
+
+        // Activa la pantalla negra al morir
+        if (panelPantallaMuerte != null)
+        {
+            panelPantallaMuerte.SetActive(true);
+        }
 
         if (textoRevivir != null)
         {
@@ -127,7 +130,6 @@ public class VidaJugador : MonoBehaviour
         if (spriteRenderer != null) spriteRenderer.enabled = false;
         if (col2D != null) col2D.enabled = false;
 
-        // Si aún tenía escudo al morir, se oculta
         if (objetoEscudoVisual != null)
         {
             objetoEscudoVisual.SetActive(false);
@@ -136,34 +138,7 @@ public class VidaJugador : MonoBehaviour
 
     public void Revivir()
     {
-        estaMuerto = false;
-        vidaActual = vidaMaxima;
-        textVida.text = "Vida: " + vidaActual;
-        barraVida.fillAmount = 1f; // Actualiza la barra de vida por imagen
-
-        // Opcional: restaurar el escudo al revivir
-        tieneEscudo = true;
-        if (objetoEscudoVisual != null)
-        {
-            objetoEscudoVisual.SetActive(true);
-        }
-
-        transform.position = posicionInicial;
-
-        if (textoRevivir != null)
-        {
-            textoRevivir.SetActive(false);
-        }
-
-        if (rb != null)
-        {
-            rb.simulated = true;
-            rb.linearVelocity = Vector2.zero;
-        }
-
-        if (spriteRenderer != null) spriteRenderer.enabled = true;
-        if (col2D != null) col2D.enabled = true;
-
-        Debug.Log("El jugador ha revivido con vida: " + vidaActual);
+        // Al recargar la escena, la vida, los enemigos eliminados y la interfaz vuelven automáticamente a su estado original
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
