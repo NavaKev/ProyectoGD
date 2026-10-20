@@ -232,7 +232,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: ff92939a627188a43b28b96c0fa7f6e8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 504b188710bb26246b2b1f06e962eddf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -326,7 +326,7 @@ GameObject:
   - component: {fileID: 9147003807801992355}
   - component: {fileID: 2895774218325762706}
   m_Layer: 7
-  m_Name: EnemigoBear
+  m_Name: EnemyZombie
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -7,8 +7,7 @@ public class Creditos : MonoBehaviour
 
     void Start()
     {
-        // No forzamos SetActive(false) aquí para no sobrescribir la orden de GestorEscena.
-        // Asegúrate de dejar el 'PanelCreditos' desactivado desde el Editor en la Hierarchy si deseas que inicie oculto por defecto.
+        
     }
 
     public void MostrarCreditos()

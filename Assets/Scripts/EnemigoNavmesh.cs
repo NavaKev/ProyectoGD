@@ -5,7 +5,9 @@ using UnityEngine.AI;
 public class EnemigoNavmesh : MonoBehaviour
 {
     [Header("Patrulla (Mínimo 2 puntos)")]
+    [Tooltip("Puntos de ruta entre los que patrullará")]
     [SerializeField] private Transform[] puntosPatrulla;
+    [Tooltip("Distancia mínima al punto para pasar al siguiente")]
     [SerializeField] private float distanciaLlegada = 0.5f;
 
     [Header("Referencias")]
@@ -19,8 +21,13 @@ public class EnemigoNavmesh : MonoBehaviour
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        agent.updateRotation = false; // Mantiene fijas las rotaciones 3D
-        agent.updateUpAxis = false;   // Permite la orientación en plano 2D XY
+
+        // Configuración crítica para navegación 2D plana
+        agent.updateRotation = false; // Mantiene fijas las rotaciones 3D[cite: 1]
+        agent.updateUpAxis = false;   // Permite la orientación en plano 2D XY[cite: 1]
+
+        // Asegura que el enemigo inicie en Z = 0
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
 
         if (visEnemigo == null)
         {
@@ -32,34 +39,47 @@ public class EnemigoNavmesh : MonoBehaviour
     {
         if (puntosPatrulla != null && puntosPatrulla.Length > 0 && puntosPatrulla[0] != null)
         {
-            agent.SetDestination(puntosPatrulla[0].position);
+            FijarDestino(puntosPatrulla[0].position);
         }
     }
 
     void Update()
     {
-        // 1. Voltea el sprite según la dirección en la que camina
+        // Bloqueo continuo del eje Z en 0 para evitar hundimiento en profundidad
+        if (transform.position.z != 0f)
+        {
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0f);
+        }
+
+        // 1. Voltea el sprite según la dirección horizontal
         GestionarGiro();
 
-        // 2. Persecución (si el jugador está dentro de los 5m y visible)
+        // 2. Persecución (si el jugador está dentro de la visión del enemigo)
         if (visEnemigo != null && visEnemigo.posicionJugador != null)
         {
-            agent.SetDestination(visEnemigo.posicionJugador.position);
+            FijarDestino(visEnemigo.posicionJugador.position);
             return;
         }
 
-        // 3. Patrullaje
+        // 3. Patrullaje de ida y vuelta
         Patrullar();
+    }
+
+    private void FijarDestino(Vector3 objetivo)
+    {
+        // Fija el destino en el plano 2D con Z = 0
+        Vector3 destino2D = new Vector3(objetivo.x, objetivo.y, 0f);
+        agent.SetDestination(destino2D);
     }
 
     private void GestionarGiro()
     {
-        // Si se mueve hacia la derecha y está mirando a la izquierda
+        // Movimiento a la derecha mirando a la izquierda
         if (agent.velocity.x > 0.1f && !mirandoDerecha)
         {
             Voltear();
         }
-        // Si se mueve hacia la izquierda y está mirando a la derecha
+        // Movimiento a la izquierda mirando a la derecha
         else if (agent.velocity.x < -0.1f && mirandoDerecha)
         {
             Voltear();
@@ -70,7 +90,7 @@ public class EnemigoNavmesh : MonoBehaviour
     {
         mirandoDerecha = !mirandoDerecha;
         Vector3 escala = transform.localScale;
-        escala.x *= -1; // Invierte el eje horizontal del sprite y de su visión
+        escala.x *= -1; // Invierte el eje horizontal del sprite y sus componentes hijos[cite: 1]
         transform.localScale = escala;
     }
 
@@ -81,7 +101,7 @@ public class EnemigoNavmesh : MonoBehaviour
         Transform puntoObjetivo = puntosPatrulla[indiceActual];
         if (puntoObjetivo == null) return;
 
-        agent.SetDestination(puntoObjetivo.position);
+        FijarDestino(puntoObjetivo.position);
 
         if (!agent.pathPending && agent.remainingDistance <= distanciaLlegada)
         {
