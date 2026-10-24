@@ -9,7 +9,6 @@ public class DetectarDanoEnemy : MonoBehaviour
 
     void Awake()
     {
-        
         vidaEnemigo = GetComponentInParent<SistemaVida>();
     }
 
@@ -17,15 +16,19 @@ public class DetectarDanoEnemy : MonoBehaviour
     {
         if (vidaEnemigo == null) return;
 
-        // 1. Proyectil (Bala)
+        // 1. Proyectil (Bala del Pool)
         if (collision.CompareTag("Bala"))
         {
             Bala bala = collision.GetComponent<Bala>() ?? collision.GetComponentInParent<Bala>();
             if (bala != null)
             {
                 vidaEnemigo.RecibirDano(bala.Dano);
+                bala.DesactivarBala(); // Devuelve la bala al pool en lugar de destruirla
             }
-            Destroy(collision.gameObject);
+            else
+            {
+                collision.gameObject.SetActive(false);
+            }
             return;
         }
 

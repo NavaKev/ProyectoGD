@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -12,6 +13,12 @@ public class Pistola : MonoBehaviour
     [SerializeField] private PlayerMov playerMov;
     [SerializeField] private PlayerInput playerInput;
 
+    [Header("Object Pool")]
+    [Tooltip("Cantidad de balas instanciadas de inicio en la reserva")]
+    [SerializeField] private int tamanoPoolInicial = 10;
+    private List<Bala> poolBalas;
+    private Transform contenedorPool;
+
     [Header("Munición y Recarga")]
     [SerializeField] private int capacidadCargador = 5;
     [SerializeField] private float tiempoRecarga = 1.2f;
@@ -22,7 +29,7 @@ public class Pistola : MonoBehaviour
 
     [Header("Tiempo entre disparos")]
     [SerializeField] private float tiempoEntreDisparos = 0.5f;
-    [SerializeField] private float ultimoDisparo;
+    private float ultimoDisparo;
 
     [Header("Animación")]
     [SerializeField] private Animator anim;
@@ -45,6 +52,8 @@ public class Pistola : MonoBehaviour
         if (anim == null) anim = GetComponent<Animator>();
 
         balasActuales = capacidadCargador;
+
+        InicializarPool();
     }
 
     private void Start()
@@ -86,6 +95,48 @@ public class Pistola : MonoBehaviour
         }
     }
 
+    private void InicializarPool()
+    {
+        poolBalas = new List<Bala>();
+
+        // Crea un objeto vacío en la escena para mantener limpio el árbol de la jerarquía
+        GameObject poolObj = new GameObject("Pool_Balas");
+        contenedorPool = poolObj.transform;
+
+        for (int i = 0; i < tamanoPoolInicial; i++)
+        {
+            CrearNuevaBalaParaPool();
+        }
+    }
+
+    private Bala CrearNuevaBalaParaPool()
+    {
+        if (balaPrefab == null) return null;
+
+        GameObject nuevaBala = Instantiate(balaPrefab, contenedorPool);
+        nuevaBala.SetActive(false);
+
+        Bala scriptBala = nuevaBala.GetComponent<Bala>();
+        poolBalas.Add(scriptBala);
+
+        return scriptBala;
+    }
+
+    private Bala ObtenerBalaDelPool()
+    {
+        // 1. Busca si hay alguna bala apagada disponible
+        for (int i = 0; i < poolBalas.Count; i++)
+        {
+            if (poolBalas[i] != null && !poolBalas[i].gameObject.activeInHierarchy)
+            {
+                return poolBalas[i];
+            }
+        }
+
+        // 2. Si se agotaron todas las disponibles, crea una extra dinámicamente
+        return CrearNuevaBalaParaPool();
+    }
+
     private void IntentarDisparar()
     {
         if (estaRecargando)
@@ -117,7 +168,6 @@ public class Pistola : MonoBehaviour
         Vector2 direccion = Vector2.right;
         bool apuntandoArriba = false;
 
-        // Comprobación con Input System
         if (moverAccion != null)
         {
             Vector2 inputMov = moverAccion.ReadValue<Vector2>();
@@ -127,7 +177,6 @@ public class Pistola : MonoBehaviour
             }
         }
 
-        // Respaldar comprobación con teclado por si la acción 'Mover' tiene otro nombre
         if (!apuntandoArriba && Keyboard.current != null)
         {
             if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed)
@@ -136,7 +185,6 @@ public class Pistola : MonoBehaviour
             }
         }
 
-        // Asignar vector según si está apuntando arriba o a los lados
         if (apuntandoArriba)
         {
             direccion = Vector2.up;
@@ -147,7 +195,7 @@ public class Pistola : MonoBehaviour
             direccion = new Vector2(dirX, 0f);
         }
 
-        // 2. Determinar el punto de origen
+        // 2. Determinar punto de origen
         Transform origen = (apuntandoArriba && puntoDisparoArriba != null) ? puntoDisparoArriba : puntoDisparo;
 
         // 3. Activar parámetros en el Animator
@@ -160,13 +208,13 @@ public class Pistola : MonoBehaviour
         balasActuales--;
         ActualizarUIBalas();
 
-        // 4. Instanciar e inicializar la bala
-        GameObject balaObj = Instantiate(balaPrefab, origen.position, Quaternion.identity);
-        Bala balaScript = balaObj.GetComponent<Bala>();
-
-        if (balaScript != null)
+        // 4. Tomar la bala del pool en vez de instanciarla
+        Bala bala = ObtenerBalaDelPool();
+        if (bala != null)
         {
-            balaScript.EstablecerDireccion(direccion);
+            bala.transform.position = origen.position;
+            bala.gameObject.SetActive(true); // Se activa y reinicia su temporizador
+            bala.EstablecerDireccion(direccion);
         }
 
         Debug.Log($"Disparo realizado hacia {direccion}. Balas restantes: {balasActuales}/{capacidadCargador}");
