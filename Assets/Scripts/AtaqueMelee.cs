@@ -55,8 +55,8 @@ public class AtaqueMelee : MonoBehaviour
 
     private void Update()
     {
-        
-        if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame && Time.time >= tiempoSiguienteAtaque)
+    
+        if (Keyboard.current != null && Keyboard.current.kKey.wasPressedThisFrame && Time.time >= tiempoSiguienteAtaque)
         {
             EjecutarAtaque();
             tiempoSiguienteAtaque = Time.time + tiempoEntreAtaques;

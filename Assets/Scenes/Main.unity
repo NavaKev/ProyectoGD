@@ -16706,12 +16706,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VidaJugador
   vidaMaxima: 50
+  tiempoInmunidad: 2
+  intervaloParpadeo: 0.1
   tieneEscudo: 1
   objetoEscudoVisual: {fileID: 1923552941}
   panelPantallaMuerte: {fileID: 2015768267}
   textoRevivir: {fileID: 1959691071}
   textVida: {fileID: 885488487}
   barraVida: {fileID: 296591334}
+  spriteRenderer: {fileID: 19271282}
   anim: {fileID: 19271281}
 --- !u!81 &838753509
 AudioListener:
