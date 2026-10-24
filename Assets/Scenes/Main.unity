@@ -15087,7 +15087,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -25812,6 +25812,7 @@ MonoBehaviour:
   puntoAtaque: {fileID: 1656652935}
   playerInput: {fileID: 838753502}
   nombreAccionMelee: AtaqueMelee
+  impulseSource: {fileID: 0}
   anim: {fileID: 19271281}
 --- !u!1 &1678872236
 GameObject:
