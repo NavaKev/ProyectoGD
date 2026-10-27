@@ -111,13 +111,24 @@ public class PlayerMov : MonoBehaviour
     private void ActualizarAnimaciones()
     {
         if (anim == null) return;
-
         bool estadoSueloEstable = isGrounded || contadorCoyote > 0f;
 
         anim.SetFloat(speedHash, Mathf.Abs(rb.linearVelocity.x));
         anim.SetBool(isGroundedHash, estadoSueloEstable);
 
-        float velYAnimacion = estadoSueloEstable ? 0f : rb.linearVelocity.y;
+    // ESTABILIZACIÓN DEL PARPADEO AÉREO:
+    // Filtra las fluctuaciones en Y que ocurren al chocar con esquinas o avanzar de lado
+        float velYAnimacion = 0f;
+    
+    if (!estadoSueloEstable)
+    {
+        // Solo consideraremos que está cayendo (o subiendo) si la velocidad supera un pequeño margen
+        if (Mathf.Abs(rb.linearVelocity.y) > 0.1f)
+        {
+            velYAnimacion = rb.linearVelocity.y;
+        }
+    }
+
         anim.SetFloat(verticalVelocityHash, velYAnimacion);
     }
 

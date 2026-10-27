@@ -20,6 +20,8 @@ public class AtaqueMelee : MonoBehaviour
 
     [Header("Game Feel")]
     [SerializeField] private CinemachineImpulseSource impulseSource;
+    [Tooltip("Frena la caída momentáneamente al atacar en el aire")]
+    [SerializeField] private bool suspenderEnElAire = true;
 
     [Header("Animación")]
     [SerializeField] private Animator anim;
@@ -27,6 +29,8 @@ public class AtaqueMelee : MonoBehaviour
     private InputAction meleeAccion;
     private float tiempoSiguienteAtaque = 0f;
     private readonly int ataqueHash = Animator.StringToHash("AtaqueMelee");
+    
+    private Rigidbody2D rb;
 
     private void Awake()
     {
@@ -34,11 +38,11 @@ public class AtaqueMelee : MonoBehaviour
         if (anim == null) anim = GetComponentInParent<Animator>();
         if (puntoAtaque == null) puntoAtaque = transform;
         if (impulseSource == null) impulseSource = GetComponent<CinemachineImpulseSource>();
+        rb = GetComponentInParent<Rigidbody2D>();
     }
 
     private void Start()
     {
-        // Se inicializa en Start() para asegurar que PlayerInput ya esté listo
         if (playerInput != null && playerInput.actions != null)
         {
             meleeAccion = playerInput.actions.FindAction(nombreAccionMelee, false);
@@ -65,7 +69,6 @@ public class AtaqueMelee : MonoBehaviour
 
     private void Update()
     {
-        // Respaldo directo con la tecla K por si prefieres usar teclado
         if (Keyboard.current != null && Keyboard.current.kKey.wasPressedThisFrame && Time.time >= tiempoSiguienteAtaque)
         {
             EjecutarAtaque();
@@ -89,6 +92,12 @@ public class AtaqueMelee : MonoBehaviour
             anim.SetTrigger(ataqueHash);
         }
 
+        // Game Feel: Detiene la caída temporalmente si el personaje ataca en el aire
+        if (suspenderEnElAire && rb != null && Mathf.Abs(rb.linearVelocity.y) > 0.1f)
+        {
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
+        }
+
         Collider2D[] enemigosGolpeados = Physics2D.OverlapCircleAll(puntoAtaque.position, rangoAtaque, capaEnemigos);
         bool golpeoEnemigo = false;
 
@@ -103,7 +112,6 @@ public class AtaqueMelee : MonoBehaviour
             }
         }
 
-        // Si conecta al menos un golpe, ejecuta el Game Feel (Screen Shake e Hit Stop)
         if (golpeoEnemigo)
         {
             if (impulseSource != null) impulseSource.GenerateImpulse();
@@ -113,9 +121,9 @@ public class AtaqueMelee : MonoBehaviour
 
     private IEnumerator EfectoHitStop()
     {
-        Time.timeScale = 0f; // Congela el juego
-        yield return new WaitForSecondsRealtime(0.05f); // Espera en tiempo real
-        Time.timeScale = 1f; // Restaura el tiempo
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(0.05f);
+        Time.timeScale = 1f;
     }
 
     private void OnDrawGizmosSelected()
