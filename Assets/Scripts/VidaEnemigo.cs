@@ -6,6 +6,9 @@ public class VidaEnemigo : MonoBehaviour
     [SerializeField] private int vidaMaxima = 5;
     [SerializeField] private int vidaActual;
 
+    public int VidaActual => vidaActual;
+    public int VidaMaxima => vidaMaxima;
+
     void Start()
     {
         vidaActual = vidaMaxima;

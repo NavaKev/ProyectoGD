@@ -7,12 +7,13 @@ public class SistemaVida : MonoBehaviour
     [SerializeField] private float vidaMaxima = 100f;
     private float vidaActual;
 
+    // AÑADE ESTAS DOS LÍNEAS AQUÍ:
+    public float VidaActual => vidaActual;
+    public float VidaMaxima => vidaMaxima;
+
     [Header("Eventos")]
     public UnityEvent<float, float> OnVidaCambiada;
     public UnityEvent OnMuerte;
-
-    public float VidaActual => vidaActual;
-    public float VidaMaxima => vidaMaxima;
 
     private void Awake()
     {

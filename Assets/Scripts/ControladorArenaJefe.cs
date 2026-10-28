@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-
 [System.Serializable]
 public class BloquePlataformas
 {
@@ -12,17 +11,20 @@ public class BloquePlataformas
 public class ControladorArenaJefe : MonoBehaviour
 {
     [Header("Configuración del Jefe")]
-    
     [SerializeField] private GameObject objetoJefe;
 
+    [Header("Cámara de la Arena")]
+    [Tooltip("Arrastra aquí una Cinemachine Camera configurada para abarcar solo la arena.")]
+    [SerializeField] private GameObject camaraBoss;
+
     [Header("Muros de la Arena")]
-    
     [SerializeField] private GameObject[] muros;
 
+    [Header("Canvas de la Arena")]
+    [SerializeField] private GameObject canvasArena;
+
     [Header("Secuencia de Plataformas (Por Bloques)")]
-   
     [SerializeField] private BloquePlataformas[] secuenciaDeBloques;
-    
     [SerializeField] private float tiempoPorBloque = 2.5f;
 
     private bool batallaActiva = false;
@@ -30,7 +32,6 @@ public class ControladorArenaJefe : MonoBehaviour
 
     private void Awake()
     {
-        
         GetComponent<Collider2D>().isTrigger = true; 
     }
 
@@ -43,6 +44,12 @@ public class ControladorArenaJefe : MonoBehaviour
         if (objetoJefe != null) 
         {
             objetoJefe.SetActive(false); 
+        }
+
+        // Asegurarnos de que la cámara del boss esté apagada al inicio
+        if (camaraBoss != null)
+        {
+            camaraBoss.SetActive(false);
         }
     }
 
@@ -61,6 +68,11 @@ public class ControladorArenaJefe : MonoBehaviour
 
         if (objetoJefe != null) objetoJefe.SetActive(true);
         ActivarMuros(true);
+
+        // 1. Enciende la cámara del Boss para bloquear la vista
+        if (camaraBoss != null) camaraBoss.SetActive(true);
+
+        if (canvasArena != null) canvasArena.SetActive(true);
 
         // Inicia el bucle de bloques
         if (rutinaPlataformas != null) StopCoroutine(rutinaPlataformas);
@@ -104,6 +116,9 @@ public class ControladorArenaJefe : MonoBehaviour
         ActivarMuros(false);
         ApagarTodasLasPlataformas();
         
+        // 2. Apaga la cámara del Boss para que la cámara del jugador vuelva a seguirlo
+        if (camaraBoss != null) camaraBoss.SetActive(false);
+        
         GetComponent<Collider2D>().enabled = false;
     }
 
@@ -117,10 +132,8 @@ public class ControladorArenaJefe : MonoBehaviour
 
     private void ActivarSoloBloque(int indiceBloqueActivo)
     {
-        
         ApagarTodasLasPlataformas();
 
-        
         if (indiceBloqueActivo >= 0 && indiceBloqueActivo < secuenciaDeBloques.Length)
         {
             foreach (GameObject plat in secuenciaDeBloques[indiceBloqueActivo].plataformas)
@@ -132,7 +145,6 @@ public class ControladorArenaJefe : MonoBehaviour
 
     private void ApagarTodasLasPlataformas()
     {
-        
         foreach (BloquePlataformas bloque in secuenciaDeBloques)
         {
             if (bloque != null && bloque.plataformas != null)
