@@ -6,7 +6,7 @@ public class ProyectilEnemigo : MonoBehaviour
 
     private void Start()
     {
-        Destroy(gameObject, 5f); // Se destruye tras 5 segundos para limpiar memoria
+        Destroy(gameObject, 2.5f); // Se destruye tras 5 segundos para limpiar memoria
     }
 
     private void OnTriggerEnter2D(Collider2D col)
