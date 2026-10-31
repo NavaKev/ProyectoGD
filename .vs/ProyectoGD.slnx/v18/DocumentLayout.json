@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\lind zero\\documents\\github\\proyectogd\\assets\\scripts\\palanca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\palanca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\lind zero\\documents\\github\\proyectogd\\assets\\scripts\\bosscuervo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\bosscuervo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|c:\\users\\lind zero\\documents\\github\\proyectogd\\assets\\scripts\\creditos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B4CD19DA-EE08-5225-FB19-1D0DFA4113DD}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\creditos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -27,19 +35,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Palanca.cs",
+              "DocumentMoniker": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\Palanca.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Palanca.cs",
+              "ToolTip": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\Palanca.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Palanca.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-31T06:19:56.558Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "BossCuervo.cs",
+              "DocumentMoniker": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\BossCuervo.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\BossCuervo.cs",
+              "ToolTip": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\BossCuervo.cs",
+              "RelativeToolTip": "Assets\\Scripts\\BossCuervo.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-31T02:48:11.863Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Creditos.cs",
               "DocumentMoniker": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\Creditos.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Creditos.cs",
               "ToolTip": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\Creditos.cs",
               "RelativeToolTip": "Assets\\Scripts\\Creditos.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-10-08T03:45:33.682Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "GestorEscena.cs",
               "DocumentMoniker": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\GestorEscena.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\GestorEscena.cs",
@@ -47,12 +81,11 @@
               "RelativeToolTip": "Assets\\Scripts\\GestorEscena.cs",
               "ViewState": "AgIAAAUAAAAAAAAAAAAkwBoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-08T03:29:41.545Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-08T03:29:41.545Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "CambiarEscena.cs",
               "DocumentMoniker": "C:\\Users\\Lind Zero\\Documents\\GitHub\\ProyectoGD\\Assets\\Scripts\\CambiarEscena.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\CambiarEscena.cs",
@@ -60,8 +93,7 @@
               "RelativeToolTip": "Assets\\Scripts\\CambiarEscena.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-10-08T03:25:09.197Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-10-08T03:25:09.197Z"
             }
           ]
         }
